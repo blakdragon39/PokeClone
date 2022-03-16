@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pokemon", menuName = "Pokemon/Create new pokemon")]
@@ -14,6 +15,7 @@ public class PokemonBase : ScriptableObject
     [SerializeField] private PokemonType type1;
     [SerializeField] private PokemonType type2;
 
+    // Base Stats
     [SerializeField] private int maxHp;
     [SerializeField] private int attack;
     [SerializeField] private int defence;
@@ -21,66 +23,44 @@ public class PokemonBase : ScriptableObject
     [SerializeField] private int spDefence;
     [SerializeField] private int speed;
 
-    public string Name
-    {
-        get { return name; }
-    }
+    [SerializeField] private List<LearnableMove> learnableMoves;
 
-    public string Description
-    {
-        get { return description; }
-    }
+    public string Name => name;
 
-    public Sprite FrontSprite
-    {
-        get { return frontSprite; }
-    }
+    public string Description => description;
 
-    public Sprite BackSprite
-    {
-        get { return backSprite; }
-    }
+    public Sprite FrontSprite => frontSprite;
 
-    public PokemonType Type1
-    {
-        get { return type1; }
-    }
+    public Sprite BackSprite => backSprite;
 
-    public PokemonType Type2
-    {
-        get { return type2; }
-    }
-    
-    
-    public int MaxHp
-    {
-        get { return maxHp; }
-    }
-    
-    public int Attack
-    {
-        get { return attack; }
-    }
-    
-    public int Defence
-    {
-        get { return defence; }
-    }
-    
-    public int SpAttack
-    {
-        get { return spAttack; }
-    }
-    
-    public int SpDefence
-    {
-        get { return spDefence; }
-    }
-    
-    public int Speed
-    {
-        get { return speed; }
-    }
+    public PokemonType Type1 => type1;
+
+    public PokemonType Type2 => type2;
+
+    public int MaxHp => maxHp;
+
+    public int Attack => attack;
+
+    public int Defence => defence;
+
+    public int SpAttack => spAttack;
+
+    public int SpDefence => spDefence;
+
+    public int Speed => speed;
+
+    public List<LearnableMove> LearnableMoves => learnableMoves;
+}
+
+[System.Serializable]
+public class LearnableMove
+{
+    [SerializeField] private MoveBase moveBase;
+    [SerializeField] private int level;
+
+    public MoveBase Base => moveBase;
+
+    public int Level => level;
 }
 
 public enum PokemonType
