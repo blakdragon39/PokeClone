@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pokemon", menuName = "Pokemon/Create new pokemon")]
-public class PokemonBase : ScriptableObject
-{
-    [SerializeField] private string name;
+public class PokemonBase : ScriptableObject {
     
-    [TextArea]
-    [SerializeField] private string description;
+    [SerializeField] private string name;
+
+    [TextArea] [SerializeField] private string description;
 
     [SerializeField] private Sprite frontSprite;
     [SerializeField] private Sprite backSprite;
@@ -53,8 +52,8 @@ public class PokemonBase : ScriptableObject
 }
 
 [System.Serializable]
-public class LearnableMove
-{
+public class LearnableMove {
+    
     [SerializeField] private MoveBase moveBase;
     [SerializeField] private int level;
 
@@ -63,8 +62,7 @@ public class LearnableMove
     public int Level => level;
 }
 
-public enum PokemonType
-{
+public enum PokemonType {
     None,
     Normal,
     Fire,

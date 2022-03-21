@@ -2,12 +2,12 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class PlayerController : MonoBehaviour
-{
+public class PlayerController : MonoBehaviour {
+    
     public float moveSpeed;
     public LayerMask solidObjectsLayer;
     public LayerMask grassLayer;
-    
+
     private bool isMoving;
     private Vector2 input;
 
@@ -16,48 +16,41 @@ public class PlayerController : MonoBehaviour
     private int moveYId;
     private int isMovingId;
 
-    private void Awake()
-    {
+    private void Awake() {
         animator = GetComponent<Animator>();
         moveXId = Animator.StringToHash("moveX");
         moveYId = Animator.StringToHash("moveY");
         isMovingId = Animator.StringToHash("isMoving");
     }
 
-    public void Update()
-    {
-        if (!isMoving)
-        {
+    public void Update() {
+        if (!isMoving) {
             input.x = Input.GetAxisRaw("Horizontal");
             input.y = Input.GetAxisRaw("Vertical");
-            
+
             if (input.x != 0) input.y = 0; //disables diagonal movement  
-            
-            if (input != Vector2.zero)
-            {
+
+            if (input != Vector2.zero) {
                 animator.SetFloat(moveXId, input.x);
                 animator.SetFloat(moveYId, input.y);
-                
+
                 var targetPos = transform.position;
                 targetPos.x += input.x;
                 targetPos.y += input.y;
 
-                if (IsWalkable(targetPos))
-                {
+                if (IsWalkable(targetPos)) {
                     StartCoroutine(Move(targetPos));
                 }
             }
         }
-        
+
         animator.SetBool(isMovingId, isMoving);
     }
 
-    private IEnumerator Move(Vector3 targetPos)
-    {
+    private IEnumerator Move(Vector3 targetPos) {
         isMoving = true;
-        
-        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon)
-        {
+
+        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon) {
             transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
             yield return null;
         }
@@ -68,17 +61,13 @@ public class PlayerController : MonoBehaviour
         CheckForEncounters();
     }
 
-    private bool IsWalkable(Vector3 targetPos)
-    {
+    private bool IsWalkable(Vector3 targetPos) {
         return Physics2D.OverlapCircle(targetPos, 0.2f, solidObjectsLayer) == null;
     }
 
-    private void CheckForEncounters()
-    {
-        if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer) != null)
-        {
-            if (Random.Range(1, 101) <= 10)
-            {
+    private void CheckForEncounters() {
+        if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer) != null) {
+            if (Random.Range(1, 101) <= 10) {
                 Debug.Log("Encountered a wild pokemon");
             }
         }
