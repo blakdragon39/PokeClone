@@ -35,8 +35,21 @@ public class Pokemon {
 
     public int Speed => Mathf.FloorToInt(Base.Speed * Level / 100f) + 5;
 
-    public bool TakeDamage(Move move, Pokemon attacker) {
-        float modifiers = Random.Range(0.85f, 1f);
+    public DamageDetails TakeDamage(Move move, Pokemon attacker) {
+        float critical = 1f;
+        if (Random.value * 100f <= 6.24)
+            critical = 2f;
+        
+        float type = TypeChart.GetEffectiveness(move.Base.Type, Base.Type1) *
+                     TypeChart.GetEffectiveness(move.Base.Type, Base.Type2);
+
+        var damageDetails = new DamageDetails {
+            TypeEffectiveness = type,
+            Critical = critical > 1f,
+            Fainted = false
+        };
+        
+        float modifiers = Random.Range(0.85f, 1f) * type * critical;
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * move.Base.Power * ((float) attacker.Attack / Defence) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
@@ -45,13 +58,19 @@ public class Pokemon {
 
         if (HP <= 0) {
             HP = 0;
-            return true;
+            damageDetails.Fainted = true;
         }
 
-        return false;
+        return damageDetails;
     }
 
     public Move GetRandomMove() {
         return Moves[Random.Range(0, Moves.Count)];
     }
+}
+
+public class DamageDetails {
+    public bool Fainted { get; set; }
+    public bool Critical { get; set; }
+    public float TypeEffectiveness { get; set; }
 }

@@ -27,8 +27,7 @@ public class BattleSystem : MonoBehaviour {
     private void Update() {
         if (state == BattleState.PlayerAction) {
             HandleActionSelection();
-        }
-        else if (state == BattleState.PlayerMove) {
+        } else if (state == BattleState.PlayerMove) {
             HandleMoveSelection();
         }
     }
@@ -41,7 +40,6 @@ public class BattleSystem : MonoBehaviour {
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
 
         yield return dialogBox.TypeDialog($"A wild {enemyUnit.Pokemon.Base.Name} appeared!");
-        yield return new WaitForSeconds(1f);
 
         PlayerAction();
     }
@@ -61,15 +59,15 @@ public class BattleSystem : MonoBehaviour {
 
     private IEnumerator PerformPlayerMove() {
         state = BattleState.Busy;
-        
+
         var move = playerUnit.Pokemon.Moves[currentMove];
         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} used {move.Base.Name}");
-        yield return new WaitForSeconds(1f);
 
-        bool fainted = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
+        var damageDetails = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
         yield return enemyHUD.UpdateHP();
+        yield return ShowDamageDetails(damageDetails);
 
-        if (fainted) {
+        if (damageDetails.Fainted) {
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} fainted");
         } else {
             StartCoroutine(PerformEnemyMove());
@@ -81,15 +79,27 @@ public class BattleSystem : MonoBehaviour {
 
         var move = enemyUnit.Pokemon.GetRandomMove();
         yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} used {move.Base.Name}");
-        yield return new WaitForSeconds(1f);
 
-        bool fainted = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
-        playerHUD.UpdateHP();
+        var damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
+        yield return playerHUD.UpdateHP();
+        yield return ShowDamageDetails(damageDetails);
 
-        if (fainted) {
+        if (damageDetails.Fainted) {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} fainted");
         } else {
             PlayerAction();
+        }
+    }
+
+    private IEnumerator ShowDamageDetails(DamageDetails details) {
+        if (details.Critical) {
+            yield return dialogBox.TypeDialog("A critical hit!");
+        }
+
+        if (details.TypeEffectiveness > 1f) {
+            yield return dialogBox.TypeDialog("It's super effective!");
+        } else if (details.TypeEffectiveness < 1f) { //todo what about 0f?
+            yield return dialogBox.TypeDialog("It's not very effective.");
         }
     }
 
@@ -97,8 +107,7 @@ public class BattleSystem : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
             if (currentAction < 1)
                 currentAction += 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+        } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
             if (currentAction > 0)
                 currentAction -= 1;
         }
@@ -106,12 +115,9 @@ public class BattleSystem : MonoBehaviour {
         dialogBox.UpdateActionSelection(currentAction);
 
         if (Input.GetKeyDown(KeyCode.Z)) {
-            if (currentAction == 0) // Fight
-            {
+            if (currentAction == 0) { // Fight
                 PlayerMove();
-            }
-            else if (currentAction == 1) // Run
-            {
+            } else if (currentAction == 1) { // Run
                 //run
             }
         }
@@ -121,16 +127,13 @@ public class BattleSystem : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.RightArrow)) {
             if (currentMove < playerUnit.Pokemon.Moves.Count - 1)
                 currentMove += 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+        } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
             if (currentMove > 0)
                 currentMove -= 1;
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+        } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
             if (currentMove < playerUnit.Pokemon.Moves.Count - 2)
                 currentMove += 2;
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+        } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
             if (currentMove > 1)
                 currentMove -= 2;
         }
