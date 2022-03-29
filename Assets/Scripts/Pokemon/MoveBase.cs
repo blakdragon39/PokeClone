@@ -11,6 +11,7 @@ public class MoveBase : ScriptableObject {
     [SerializeField] private int power;
     [SerializeField] private int accuracy;
     [SerializeField] private int pp;
+    [SerializeField] private bool isSpecial;
 
     public string Name => name;
 
@@ -23,4 +24,6 @@ public class MoveBase : ScriptableObject {
     public int Accuracy => accuracy;
 
     public int PP => pp;
+
+    public bool IsSpecial => isSpecial;
 }
