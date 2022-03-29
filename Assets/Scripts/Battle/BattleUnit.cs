@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class BattleUnit : MonoBehaviour {
     
-    [SerializeField] private PokemonBase _base;
-    [SerializeField] private int level;
     [SerializeField] private bool isPlayerUnit;
 
     public Pokemon Pokemon { get; set; }
@@ -20,38 +18,25 @@ public class BattleUnit : MonoBehaviour {
         originalColor = image.color;
     }
 
-    public void Setup() {
-        Pokemon = new Pokemon(_base, level);
-        
-        if (isPlayerUnit) {
-            image.sprite = Pokemon.Base.BackSprite;
-        } else {
-            image.sprite = Pokemon.Base.FrontSprite;
-        }
+    public void Setup(Pokemon pokemon) {
+        Pokemon = pokemon;
 
+        image.sprite = isPlayerUnit ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
         image.color = originalColor;
+        
         PlayEnterAnimation();
     }
 
-    public void PlayEnterAnimation() {
-        if (isPlayerUnit) {
-            image.transform.localPosition = new Vector3(-500f, originalPos.y);
-        } else {
-            image.transform.localPosition = new Vector3(500f, originalPos.y);
-        }
-
+    private void PlayEnterAnimation() {
+        var startX = isPlayerUnit ? -500f : 500f;
+        image.transform.localPosition = new Vector3(startX, originalPos.y);
         image.transform.DOLocalMoveX(originalPos.x, 1f);
     }
 
     public void PlayAttackAnimation() {
+        var startX = isPlayerUnit ? originalPos.x + 50f : originalPos.x - 50f;
         var sequence = DOTween.Sequence();
-        
-        if (isPlayerUnit) {
-            sequence.Append(image.transform.DOLocalMoveX(originalPos.x + 50f, 0.25f));
-        } else {
-            sequence.Append(image.transform.DOLocalMoveX(originalPos.x - 50f, 0.25f));
-        }
-
+        sequence.Append(image.transform.DOLocalMoveX(startX, 0.25f));
         sequence.Append(image.transform.DOLocalMoveX(originalPos.x, 0.25f));
     }
 

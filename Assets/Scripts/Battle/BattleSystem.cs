@@ -24,21 +24,30 @@ public class BattleSystem : MonoBehaviour {
     private int currentAction;
     private int currentMove;
 
-    public void StartBattle() {
+    private PokemonParty playerParty;
+    private Pokemon wildPokemon;
+    
+    public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon) {
+        this.playerParty = playerParty;
+        this.wildPokemon = wildPokemon;
+        
         StartCoroutine(SetupBattle());
     }
 
     public void HandleUpdate() {
-        if (state == BattleState.PlayerAction) {
-            HandleActionSelection();
-        } else if (state == BattleState.PlayerMove) {
-            HandleMoveSelection();
+        switch (state) {
+            case BattleState.PlayerAction:
+                HandleActionSelection();
+                break;
+            case BattleState.PlayerMove:
+                HandleMoveSelection();
+                break;
         }
     }
 
     private IEnumerator SetupBattle() {
-        playerUnit.Setup();
-        enemyUnit.Setup();
+        playerUnit.Setup(playerParty.GetHealthyPokemon());
+        enemyUnit.Setup(wildPokemon);
         playerHUD.SetData(playerUnit.Pokemon);
         enemyHUD.SetData(enemyUnit.Pokemon);
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
@@ -105,7 +114,19 @@ public class BattleSystem : MonoBehaviour {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} fainted");
             playerUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(2f);
-            OnBattleOver(false);
+
+            var nextPokemon = playerParty.GetHealthyPokemon();
+            if (nextPokemon != null) {
+                playerUnit.Setup(nextPokemon);
+                playerHUD.SetData(nextPokemon);
+                dialogBox.SetMoveNames(nextPokemon.Moves);
+
+                yield return dialogBox.TypeDialog($"Go {nextPokemon.Base.Name}!");
+
+                PlayerAction();
+            } else {
+                OnBattleOver(false);
+            }
         } else {
             PlayerAction();
         }
