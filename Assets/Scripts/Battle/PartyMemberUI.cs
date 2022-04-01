@@ -7,6 +7,8 @@ public class PartyMemberUI : MonoBehaviour {
     [SerializeField] private Text levelText;
     [SerializeField] private HPBar hpBar;
 
+    [SerializeField] private Color highlightedColour;
+
     private Pokemon _pokemon;
 
     public void SetData(Pokemon pokemon) {
@@ -17,5 +19,7 @@ public class PartyMemberUI : MonoBehaviour {
         hpBar.SetHP((float) pokemon.HP / pokemon.MaxHp);
     }
 
-
+    public void SetSelected(bool selected) {
+        nameText.color = selected ? highlightedColour : Color.black;
+    }
 }

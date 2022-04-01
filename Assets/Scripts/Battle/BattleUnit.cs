@@ -33,6 +33,11 @@ public class BattleUnit : MonoBehaviour {
         image.transform.DOLocalMoveX(originalPos.x, 1f);
     }
 
+    public void PlayLeaveAnimation() {
+        var endX = isPlayerUnit ? -500f : 500f;
+        image.transform.DOLocalMoveX(endX, 1f);
+    }
+
     public void PlayAttackAnimation() {
         var startX = isPlayerUnit ? originalPos.x + 50f : originalPos.x - 50f;
         var sequence = DOTween.Sequence();
