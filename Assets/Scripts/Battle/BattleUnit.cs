@@ -3,10 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class BattleUnit : MonoBehaviour {
-    
-    [SerializeField] private bool isPlayerUnit;
 
     public Pokemon Pokemon { get; set; }
+    public bool IsPlayerUnit => isPlayerUnit;
+    public BattleHUD HUD => hud;
+    
+    [SerializeField] private bool isPlayerUnit;
+    [SerializeField] private BattleHUD hud;
 
     private Image image;
     private Vector3 originalPos;
@@ -23,6 +26,7 @@ public class BattleUnit : MonoBehaviour {
 
         image.sprite = isPlayerUnit ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
         image.color = originalColor;
+        hud.SetData(pokemon);
         
         PlayEnterAnimation();
     }
