@@ -80,3 +80,11 @@ public enum PokemonType {
     Ghost,
     Dragon
 }
+
+public enum Stat {
+    Attack,
+    Defence,
+    SpAttack,
+    SpDefence,
+    Speed
+}
