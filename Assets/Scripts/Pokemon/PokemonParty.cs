@@ -9,9 +9,7 @@ public class PokemonParty : MonoBehaviour {
     [SerializeField] private List<Pokemon> pokemons;
 
     private void Start() {
-        foreach (var pokemon in pokemons) {
-            pokemon.Init();
-        }
+        pokemons.ForEach(p => p.Init());
     }
 
     public Pokemon GetHealthyPokemon() {
