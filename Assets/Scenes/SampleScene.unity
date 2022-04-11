@@ -436,7 +436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pokemons:
-  - _base: {fileID: 11400000, guid: f2ad970f449c33c4a8371507233453b7, type: 2}
+  - _base: {fileID: 11400000, guid: a13ab63c976883148aadd808eb7002de, type: 2}
     level: 10
   - _base: {fileID: 11400000, guid: 42428e03262028f40975a2e45e09828d, type: 2}
     level: 3
