@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class Pokemon {
@@ -20,10 +22,13 @@ public class Pokemon {
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatBoosts { get; private set; }
     public Condition Status { get; set; }
+    public Condition VolatileStatus { get; set; }
     public int StatusTime { get; set; }
+    public int VolatileStatusTime { get; set; }
 
     public Queue<string> StatusChanges { get; private set; } = new Queue<string>();
     public bool HPChanged { get; set; }
+    public event Action OnStatusChanged;
 
     [SerializeField] private PokemonBase _base;
     [SerializeField] private int level;
@@ -42,6 +47,8 @@ public class Pokemon {
         HP = MaxHp;
 
         ResetStatBoost();
+        Status = null;
+        VolatileStatus = null;
     }
 
     public DamageDetails TakeDamage(Move move, Pokemon attacker) {
@@ -77,13 +84,29 @@ public class Pokemon {
     }
 
     public void SetStatus(ConditionID conditionID) {
+        if (Status != null) return;
+        
         Status = ConditionsDB.Conditions[conditionID];
         Status.OnStart?.Invoke(this);
         StatusChanges.Enqueue($"{_base.Name} {Status.StartMessage}");
+        OnStatusChanged?.Invoke();
     }
 
     public void CureStatus() {
         Status = null;
+        OnStatusChanged?.Invoke();
+    }
+    
+    public void SetVolatileStatus(ConditionID conditionID) {
+        if (VolatileStatus != null) return;
+        
+        VolatileStatus = ConditionsDB.Conditions[conditionID];
+        VolatileStatus.OnStart?.Invoke(this);
+        StatusChanges.Enqueue($"{_base.Name} {VolatileStatus.StartMessage}");
+    }
+
+    public void CureVolatileStatus() {
+        VolatileStatus = null;
     }
 
     public Move GetRandomMove() {
@@ -107,18 +130,26 @@ public class Pokemon {
     }
 
     public bool OnBeforeMove() {
+        bool canPerformMove = true;
+        
         if (Status?.OnBeforeMove != null) {
-            return Status.OnBeforeMove(this);
+            if (!Status.OnBeforeMove(this)) canPerformMove = false;
         }
         
-        return true;
+        if (VolatileStatus?.OnBeforeMove != null) {
+            if (!VolatileStatus.OnBeforeMove(this)) canPerformMove = false;
+        }
+        
+        return canPerformMove;
     }
     
     public void OnAfterTurn() {
         Status?.OnAfterTurn?.Invoke(this);
+        VolatileStatus?.OnAfterTurn?.Invoke(this);
     }
 
     public void OnBattleOver() {
+        VolatileStatus = null;
         ResetStatBoost();
     }
 
@@ -131,7 +162,7 @@ public class Pokemon {
             { Stat.Speed, Mathf.FloorToInt(Base.Speed * Level / 100f) + 5 }
         };
 
-        MaxHp = Mathf.FloorToInt(Base.MaxHp * Level / 100f) + 10;
+        MaxHp = Mathf.FloorToInt(Base.MaxHp * Level / 100f) + 10 + Level;
     }
 
     private void ResetStatBoost() {

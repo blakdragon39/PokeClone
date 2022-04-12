@@ -28,6 +28,10 @@ public class BattleSystem : MonoBehaviour {
 
     private PokemonParty playerParty;
     private Pokemon wildPokemon;
+
+    private void Awake() {
+        ConditionsDB.Init();
+    }
     
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon) {
         this.playerParty = playerParty;
@@ -122,6 +126,8 @@ public class BattleSystem : MonoBehaviour {
     private IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move) {
         bool canRunMove = sourceUnit.Pokemon.OnBeforeMove();
         if (!canRunMove) {
+            yield return ShowStatusChanges(sourceUnit.Pokemon);
+            yield return sourceUnit.HUD.UpdateHP();
             yield break;
         }
 
@@ -178,6 +184,11 @@ public class BattleSystem : MonoBehaviour {
         // Status Conditions
         if (effects.Status != ConditionID.None) {
             target.SetStatus(effects.Status);
+        }
+        
+        // Status Conditions
+        if (effects.VolatileStatus != ConditionID.None) {
+            target.SetVolatileStatus(effects.VolatileStatus);
         }
 
         yield return ShowStatusChanges(source);
