@@ -102,9 +102,9 @@ public class ConditionsDB {
                     SmallName = "CON",
                     StartMessage = "has been confused.",
                     OnStart = pokemon => {
-                        // sleep for 1 - 4 turns
+                        // confused for 1 - 4 turns
                         pokemon.VolatileStatusTime = Random.Range(1, 5);
-                        Debug.Log($"Will be confused for {pokemon.StatusTime} moves");
+                        Debug.Log($"Will be confused for {pokemon.VolatileStatusTime} moves");
                     },
                     OnBeforeMove = pokemon => {
                         if (pokemon.VolatileStatusTime <= 0) {
