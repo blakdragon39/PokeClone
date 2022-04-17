@@ -77,5 +77,7 @@ public class BattleDialog : MonoBehaviour {
 
         ppText.text = $"{move.PP}/{move.Base.PP}";
         typeText.text = move.Base.Type.ToString();
+        
+        ppText.color = move.PP == 0 ? Color.red : Color.black;
     }
 }
