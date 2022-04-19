@@ -15,16 +15,10 @@ public class PlayerController : MonoBehaviour {
     private bool isMoving;
     private Vector2 input;
 
-    private Animator animator;
-    private int moveXId;
-    private int moveYId;
-    private int isMovingId;
+    private CharacterAnimator animator;
 
     private void Awake() {
-        animator = GetComponent<Animator>();
-        moveXId = Animator.StringToHash("moveX");
-        moveYId = Animator.StringToHash("moveY");
-        isMovingId = Animator.StringToHash("isMoving");
+        animator = GetComponent<CharacterAnimator>();
     }
 
     public void HandleUpdate() {
@@ -35,8 +29,8 @@ public class PlayerController : MonoBehaviour {
             if (input.x != 0) input.y = 0; //disables diagonal movement  
 
             if (input != Vector2.zero) {
-                animator.SetFloat(moveXId, input.x);
-                animator.SetFloat(moveYId, input.y);
+                animator.MoveX = input.x;
+                animator.MoveY = input.y;
 
                 var targetPos = transform.position;
                 targetPos.x += input.x;
@@ -48,7 +42,7 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        animator.SetBool(isMovingId, isMoving);
+        animator.IsMoving = isMoving;
 
         if (Input.GetKeyDown(KeyCode.Z)) {
             Interact();
@@ -56,7 +50,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Interact() {
-        var facingDir = new Vector3(animator.GetFloat(moveXId), animator.GetFloat(moveYId));
+        var facingDir = new Vector3(animator.MoveX, animator.MoveY);
         var interactPos = transform.position + facingDir;
         // Debug.DrawLine(transform.position, interactPos, Color.green, 0.5f);
 
@@ -88,7 +82,7 @@ public class PlayerController : MonoBehaviour {
     private void CheckForEncounters() {
         if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer) != null) {
             if (Random.Range(1, 101) <= 10) {
-                animator.SetBool(isMovingId, false);
+                animator.IsMoving = false;
                 OnEncountered();
             }
         }
