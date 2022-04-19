@@ -312,6 +312,8 @@ GameObject:
   - component: {fileID: 52533223}
   - component: {fileID: 52533222}
   - component: {fileID: 52533224}
+  - component: {fileID: 52533226}
+  - component: {fileID: 52533225}
   m_Layer: 8
   m_Name: NPC
   m_TagString: Untagged
@@ -447,6 +449,57 @@ MonoBehaviour:
     lines:
     - Hi, have you tried walking in tall grass?
     - You can find lots of cool pokemon in there.
+  movementPattern:
+  - {x: 2, y: 0}
+  - {x: 0, y: -2}
+  - {x: -2, y: 0}
+  - {x: 0, y: 2}
+  timeBetweenPattern: 3
+--- !u!114 &52533225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52533219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a68a2678c7ca18845813e722f1852625, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkDownSprites:
+  - {fileID: -8922328891513336043, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: 5527661196443274707, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -2495014906627460004, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: 5610367206947713552, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  walkUpSprites:
+  - {fileID: 307091595780809877, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -2126968859773451732, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -5535047699543943917, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -4526993761146232485, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  walkRightSprites:
+  - {fileID: 2230936588577103941, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -9111473675286820144, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -5627484699997550656, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -5051899674784280284, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  walkLeftSprites:
+  - {fileID: 4614894318121576524, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: 7369579285134121275, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: -1211714280344312584, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+  - {fileID: 6842672397523141539, guid: 7f4e8b7bae4d52e4bb2aed51a0cf63eb, type: 3}
+--- !u!114 &52533226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52533219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa151797b66c1f549bb14172910cea60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
 --- !u!1 &69875735
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,6 +513,7 @@ GameObject:
   - component: {fileID: 69875738}
   - component: {fileID: 69875740}
   - component: {fileID: 69875739}
+  - component: {fileID: 69875741}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -545,16 +599,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bbc575597bed8849ad6d0d964a7d693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  solidObjectsLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  grassLayer:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &69875739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +652,19 @@ MonoBehaviour:
     level: 8
   - _base: {fileID: 11400000, guid: 42428e03262028f40975a2e45e09828d, type: 2}
     level: 2
+--- !u!114 &69875741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69875735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa151797b66c1f549bb14172910cea60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
 --- !u!1 &145938581
 GameObject:
   m_ObjectHideFlags: 0
@@ -10337,6 +10394,7 @@ GameObject:
   - component: {fileID: 2046003746}
   - component: {fileID: 2046003745}
   - component: {fileID: 2046003747}
+  - component: {fileID: 2046003748}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -10388,6 +10446,27 @@ MonoBehaviour:
   dialogBox: {fileID: 145938581}
   dialogText: {fileID: 1125119158}
   lettersPerSecond: 45
+--- !u!114 &2046003748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046003744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29c5a8f3b3424c24a99a1f0ffea43728, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  solidObjectsLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  grassLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &2066356266
 GameObject:
   m_ObjectHideFlags: 0
