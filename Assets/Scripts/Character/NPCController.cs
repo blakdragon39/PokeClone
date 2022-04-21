@@ -19,36 +19,43 @@ public class NPCController : MonoBehaviour, Interactable {
     }
 
     private void Update() {
-        if (DialogManager.Instance.IsShowing) return;
-        
         if (state == NPCState.Idle) {
             idleTimer += Time.deltaTime;
             if (idleTimer > timeBetweenPattern) {
                 idleTimer = 0f;
                 if (movementPattern.Count > 0) {
-                    StartCoroutine(Walk());    
+                    StartCoroutine(Walk());
                 }
             }
         }
         character.HandleUpdate();
     }
     
-    public void Interact() {
+    public void Interact(Transform initiator) {
         if (state == NPCState.Idle) {
-            StartCoroutine(DialogManager.Instance.ShowDialog(dialog));
+            state = NPCState.Dialog;
+            character.LookTowards(initiator.position);
+            StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () => {
+                idleTimer = 0f;
+                state = NPCState.Idle;
+            }));
         }
     }
 
     private IEnumerator Walk() {
         state = NPCState.Walking;
+        var oldPos = transform.position;
 
         yield return character.Move(movementPattern[currentPattern]);
-        currentPattern = (currentPattern + 1) % movementPattern.Count;
-        
+
+        if (transform.position != oldPos) {
+            currentPattern = (currentPattern + 1) % movementPattern.Count;
+        }
+
         state = NPCState.Idle;
     }
 }
 
 public enum NPCState {
-    Idle, Walking
+    Idle, Walking, Dialog
 }
