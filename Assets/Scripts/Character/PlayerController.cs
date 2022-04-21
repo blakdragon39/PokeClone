@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 public class PlayerController : MonoBehaviour {
 
     public event Action OnEncountered;
+    public event Action<Collider2D> OnEnterTrainersView;
 
     private Vector2 input;
 
@@ -22,7 +23,7 @@ public class PlayerController : MonoBehaviour {
             if (input.x != 0) input.y = 0; //disables diagonal movement  
 
             if (input != Vector2.zero) {
-                StartCoroutine(character.Move(input, CheckForEncounters));
+                StartCoroutine(character.Move(input, OnMoveOver));
             }
         }
         
@@ -45,12 +46,25 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void OnMoveOver() {
+        CheckForEncounters();
+        CheckIfInTrainersView();
+    }
+    
     private void CheckForEncounters() {
         if (Physics2D.OverlapCircle(transform.position, 0.2f, GameLayers.instance.GrassLayer) != null) {
             if (Random.Range(1, 101) <= 10) {
                 character.Animator.IsMoving = false;
                 OnEncountered();
             }
+        }
+    }
+
+    private void CheckIfInTrainersView() {
+        var collider = Physics2D.OverlapCircle(transform.position, 0.2f, GameLayers.instance.FOVLayer);
+        if (collider != null) {
+            character.Animator.IsMoving = false;
+            OnEnterTrainersView?.Invoke(collider);
         }
     }
 }
