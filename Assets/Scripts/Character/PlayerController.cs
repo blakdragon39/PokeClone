@@ -4,8 +4,14 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour {
 
+    [SerializeField] private string name;
+    [SerializeField] private Sprite sprite;
+    
     public event Action OnEncountered;
     public event Action<Collider2D> OnEnterTrainersView;
+    
+    public string Name => name;
+    public Sprite Sprite => sprite;
 
     private Vector2 input;
 

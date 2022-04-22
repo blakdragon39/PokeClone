@@ -3,10 +3,15 @@ using UnityEngine;
 
 public class TrainerController : MonoBehaviour {
 
+    [SerializeField] private string name;
+    [SerializeField] private Sprite sprite;
     [SerializeField] private Dialog dialog;
     [SerializeField] private GameObject exclamation;
     [SerializeField] private GameObject fov;
 
+    public string Name => name;
+    public Sprite Sprite => sprite;
+    
     private Character character;
 
     private void Awake() {
@@ -30,10 +35,9 @@ public class TrainerController : MonoBehaviour {
         yield return character.Move(moveVec);
         
         // Show dialog
-        yield return DialogManager.Instance.ShowDialog(dialog, () => {
-            Debug.Log("Starting trainer battle");
-            // todo start trainer battle
-        });
+        StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () => {
+            GameController.Instance.StartTrainerBattle(this);
+        }));
     }
 
     public void SetFOVRotation(FacingDirection dir) {

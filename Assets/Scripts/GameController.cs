@@ -6,12 +6,19 @@ public enum GameState {
 
 public class GameController : MonoBehaviour {
 
+    public static GameController Instance { get; private set; }
+    
     [SerializeField] private PlayerController playerController;
     [SerializeField] private BattleSystem battleSystem;
     [SerializeField] private Camera worldCamera;
     
     private GameState state;
 
+    private void Awake() {
+        Instance = this;
+        ConditionsDB.Init();
+    }
+    
     private void Start() {
         playerController.OnEncountered += StartBattle;
         battleSystem.OnBattleOver += EndBattle;
@@ -47,6 +54,17 @@ public class GameController : MonoBehaviour {
         var wildPokemon = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetRandomWildPokemon();
         
         battleSystem.StartBattle(playerParty, wildPokemon);
+    }
+    
+    public void StartTrainerBattle(TrainerController trainer) {
+        state = GameState.Battle;
+        battleSystem.gameObject.SetActive(true);
+        worldCamera.gameObject.SetActive(false);
+
+        var playerParty = playerController.GetComponent<PokemonParty>();
+        var trainerParty = trainer.GetComponent<PokemonParty>();
+        
+        battleSystem.StartTrainerBattle(playerParty, trainerParty);
     }
 
     private void EndBattle(bool won) {
