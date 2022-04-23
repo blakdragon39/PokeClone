@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class TrainerController : MonoBehaviour {
+public class TrainerController : MonoBehaviour, Interactable {
 
     [SerializeField] private string name;
     [SerializeField] private Sprite sprite;
     [SerializeField] private Dialog dialog;
+    [SerializeField] private Dialog dialogAfterBattle;
     [SerializeField] private GameObject exclamation;
     [SerializeField] private GameObject fov;
 
@@ -14,12 +15,30 @@ public class TrainerController : MonoBehaviour {
     
     private Character character;
 
+    private bool battleLost = false;
+
     private void Awake() {
         character = GetComponent<Character>();
     }
 
     private void Start() {
         SetFOVRotation(character.Animator.DefaultDirection);
+    }
+
+    private void Update() {
+        character.HandleUpdate();
+    }
+    
+    public void Interact(Transform initiator) {
+        character.LookTowards(initiator.position);
+
+        if (!battleLost) {
+            StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () => {
+                GameController.Instance.StartTrainerBattle(this);
+            }));    
+        } else {
+            StartCoroutine(DialogManager.Instance.ShowDialog(dialogAfterBattle));
+        }
     }
 
     public IEnumerator TriggerTrainerBattle(PlayerController player) {
@@ -38,6 +57,11 @@ public class TrainerController : MonoBehaviour {
         StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () => {
             GameController.Instance.StartTrainerBattle(this);
         }));
+    }
+
+    public void BattleLost() {
+        fov.gameObject.SetActive(false);
+        battleLost = true;
     }
 
     public void SetFOVRotation(FacingDirection dir) {

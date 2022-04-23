@@ -11,8 +11,9 @@ public class GameController : MonoBehaviour {
     [SerializeField] private PlayerController playerController;
     [SerializeField] private BattleSystem battleSystem;
     [SerializeField] private Camera worldCamera;
-    
+
     private GameState state;
+    private TrainerController trainer;
 
     private void Awake() {
         Instance = this;
@@ -57,6 +58,7 @@ public class GameController : MonoBehaviour {
     }
     
     public void StartTrainerBattle(TrainerController trainer) {
+        this.trainer = trainer;
         state = GameState.Battle;
         battleSystem.gameObject.SetActive(true);
         worldCamera.gameObject.SetActive(false);
@@ -68,6 +70,11 @@ public class GameController : MonoBehaviour {
     }
 
     private void EndBattle(bool won) {
+        if (won && trainer != null) {
+            trainer.BattleLost();
+            trainer = null;
+        }
+        
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
