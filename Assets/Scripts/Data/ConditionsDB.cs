@@ -127,6 +127,22 @@ public class ConditionsDB {
                 }
             }
         };
+
+    public static float GetStatusBonus(Condition condition) {
+        if (condition == null) return 1f;
+        
+        switch (condition.ID) {
+            case ConditionID.Sleep:
+            case ConditionID.Freeze:
+                return 2f;
+            case ConditionID.Paralyzed:
+            case ConditionID.Poison:
+            case ConditionID.Burn:
+                return 0.5f;
+            default:
+                return 1f;
+        }
+    }
 }
 
 public enum ConditionID {

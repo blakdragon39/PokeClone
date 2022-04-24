@@ -22,31 +22,27 @@ public class PokemonBase : ScriptableObject {
     [SerializeField] private int spDefence;
     [SerializeField] private int speed;
 
+    [SerializeField] private int catchRate = 255;
+
     [SerializeField] private List<LearnableMove> learnableMoves;
 
     public string Name => name;
-
     public string Description => description;
 
     public Sprite FrontSprite => frontSprite;
-
     public Sprite BackSprite => backSprite;
 
     public PokemonType Type1 => type1;
-
     public PokemonType Type2 => type2;
 
     public int MaxHp => maxHp;
-
     public int Attack => attack;
-
     public int Defence => defence;
-
     public int SpAttack => spAttack;
-
     public int SpDefence => spDefence;
-
     public int Speed => speed;
+
+    public int CatchRate => catchRate;
 
     public List<LearnableMove> LearnableMoves => learnableMoves;
 }

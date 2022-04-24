@@ -28,13 +28,20 @@ public class Pokemon {
     public int StatusTime { get; set; }
     public int VolatileStatusTime { get; set; }
 
-    public Queue<string> StatusChanges { get; private set; } = new Queue<string>();
+    public Queue<string> StatusChanges { get; private set; }
     public bool HPChanged { get; set; }
     public event Action OnStatusChanged;
 
     [SerializeField] private PokemonBase _base;
     [SerializeField] private int level;
 
+    public Pokemon(PokemonBase pBase, int pLevel) {
+        _base = pBase;
+        level = pLevel;
+
+        Init();
+    }
+    
     public void Init() {
         Moves = new List<Move>();
         foreach (var move in Base.LearnableMoves) {
@@ -48,6 +55,7 @@ public class Pokemon {
         CalculateStats();
         HP = MaxHp;
 
+        StatusChanges = new Queue<string>();
         ResetStatBoost();
         Status = null;
         VolatileStatus = null;

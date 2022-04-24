@@ -15,4 +15,12 @@ public class PokemonParty : MonoBehaviour {
     public Pokemon GetHealthyPokemon() {
         return pokemons.FirstOrDefault(pokemon => pokemon.HP > 0);
     }
+
+    public void AddPokemon(Pokemon newPokemon) {
+        if (pokemons.Count < 6) {
+            pokemons.Add(newPokemon);
+        } else {
+            // todo transfer to PC
+        }
+    }
 }
