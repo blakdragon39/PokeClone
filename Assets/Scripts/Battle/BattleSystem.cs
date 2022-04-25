@@ -250,7 +250,9 @@ public class BattleSystem : MonoBehaviour {
             if (state == BattleState.BattleOver) yield break;
         }
 
-        if (state != BattleState.BattleOver) state = BattleState.ActionSelection;
+        if (state != BattleState.BattleOver) {
+            ActionSelection();
+        }
     }
 
     private IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move) {

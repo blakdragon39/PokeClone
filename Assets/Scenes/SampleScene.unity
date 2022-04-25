@@ -1430,7 +1430,7 @@ MonoBehaviour:
   partyScreen: {fileID: 1319074611}
   playerImage: {fileID: 745771923}
   trainerImage: {fileID: 1976639911}
-  pokeballSprite: {fileID: 0}
+  pokeballSprite: {fileID: 223810047081708199, guid: c9fe668502b3b60458c2da352e7eee7a, type: 3}
 --- !u!1 &366391489
 GameObject:
   m_ObjectHideFlags: 0
