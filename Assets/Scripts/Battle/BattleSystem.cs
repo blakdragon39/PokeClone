@@ -46,7 +46,7 @@ public class BattleSystem : MonoBehaviour {
     private PokemonParty trainerParty;
     private Pokemon wildPokemon;
 
-    private bool isTrainerBattle = false;
+    private bool isTrainerBattle;
     private PlayerController player;
     private TrainerController trainer;
 
@@ -55,6 +55,7 @@ public class BattleSystem : MonoBehaviour {
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon) {
         this.playerParty = playerParty;
         this.wildPokemon = wildPokemon;
+        isTrainerBattle = false;
         player = playerParty.GetComponent<PlayerController>();
         
         StartCoroutine(SetupBattle());
@@ -377,6 +378,12 @@ public class BattleSystem : MonoBehaviour {
             yield return playerUnit.HUD.SetExpSmooth();
 
             // Check level up
+            while (playerUnit.Pokemon.CheckForLevelUp()) {
+                yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} grew to level {playerUnit.Pokemon.Level}");
+                playerUnit.HUD.SetLevel();
+
+                yield return playerUnit.HUD.SetExpSmooth(true);
+            }
 
             yield return new WaitForSeconds(1f);
         }

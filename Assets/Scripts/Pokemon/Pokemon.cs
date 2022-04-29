@@ -144,6 +144,15 @@ public class Pokemon {
         }
     }
 
+    public bool CheckForLevelUp() {
+        if (Exp >= Base.GetExpForLevel(level + 1)) {
+            level += 1;
+            return true;
+        }
+
+        return false;
+    }
+
     public bool OnBeforeMove() {
         bool canPerformMove = true;
         
