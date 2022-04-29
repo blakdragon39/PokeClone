@@ -10,6 +10,8 @@ public class Pokemon {
     public PokemonBase Base => _base;
     public int Level => level;
     
+    public int Exp { get; set; }
+    
     public int HP { get; set; }
     public int MaxHp { get; private set; }
 
@@ -51,6 +53,8 @@ public class Pokemon {
                 if (Moves.Count >= 4) break;
             }
         }
+        
+        Exp = Base.GetExpForLevel(Level);
         
         CalculateStats();
         HP = MaxHp;
