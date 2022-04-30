@@ -6,6 +6,7 @@ public class Character : MonoBehaviour {
 
     public float moveSpeed;
     public bool IsMoving { get; set; }
+    public float OffsetY { get; private set; } = 0.3f;
     
     private CharacterAnimator animator;
 
@@ -13,6 +14,13 @@ public class Character : MonoBehaviour {
 
     private void Awake() {
         animator = GetComponent<CharacterAnimator>();
+        SetPositionAndSnapToTile(transform.position);
+    }
+
+    public void SetPositionAndSnapToTile(Vector2 pos) {
+        pos.x = Mathf.Floor(pos.x) + 0.5f;
+        pos.y = Mathf.Floor(pos.y) + 0.5f + OffsetY;
+        transform.position = pos;
     }
     
     public IEnumerator Move(Vector2 moveVector, Action OnMoveOver=null) {
