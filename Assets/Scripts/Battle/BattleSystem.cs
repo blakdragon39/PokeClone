@@ -13,7 +13,8 @@ public enum BattleState {
     Busy,
     PartyScreen,
     AboutToUse,
-    BattleOver
+    BattleOver,
+    MoveToForget
 }
 
 public enum BattleAction {
@@ -34,6 +35,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] private Image playerImage;
     [SerializeField] private Image trainerImage;
     [SerializeField] private GameObject pokeballSprite;
+    [SerializeField] private MoveSelectionUI moveSelectionUI;
 
     private BattleState state;
     private BattleState? prevState;
@@ -51,6 +53,7 @@ public class BattleSystem : MonoBehaviour {
     private TrainerController trainer;
 
     private int escapeAttempts;
+    private MoveBase moveToLearn;
 
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon) {
         this.playerParty = playerParty;
@@ -85,6 +88,23 @@ public class BattleSystem : MonoBehaviour {
                 break;
             case BattleState.AboutToUse:
                 HandleAboutToUse();
+                break;
+            case BattleState.MoveToForget:
+                moveSelectionUI.HandleMoveSelection(moveIndex => {
+                    moveSelectionUI.gameObject.SetActive(false);
+                    if (moveIndex == PokemonBase.MaxNumMoves) {
+                        // Don't learn the new move
+                        StartCoroutine(dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} did not learn {moveToLearn.Name}."));
+                    } else {
+                        // Forget the selected move and learn the new move
+                        var selectedMove = playerUnit.Pokemon.Moves[moveIndex].Base;
+                        StartCoroutine(dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} forgot {selectedMove.Name} and learned {moveToLearn.Name}!"));
+                        playerUnit.Pokemon.Moves[moveIndex] = new Move(moveToLearn);
+                    }
+
+                    moveToLearn = null;
+                    state = BattleState.RunningTurn;
+                });
                 break;
         }
     }
@@ -197,6 +217,17 @@ public class BattleSystem : MonoBehaviour {
         
         state = BattleState.AboutToUse;
         dialogBox.EnableChoiceBox(true);
+    }
+
+    private IEnumerator ChooseMoveToForget(Pokemon pokemon, MoveBase newMove) {
+        state = BattleState.Busy;
+        yield return dialogBox.TypeDialog("Choose the move you want to forget.");
+        
+        moveSelectionUI.gameObject.SetActive(true);
+        moveSelectionUI.SetMoveData(pokemon.Moves.ConvertAll(move => move.Base), newMove);
+        moveToLearn = newMove;
+
+        state = BattleState.MoveToForget;
     }
 
     private IEnumerator RunTurns(BattleAction playerAction) {
@@ -390,7 +421,11 @@ public class BattleSystem : MonoBehaviour {
                         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} learned {newMove.Base.Name}!");
                         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
                     } else {
-                        // todo forget a move in order to learn the new move
+                        yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} is trying to learn {newMove.Base.Name}!");
+                        yield return dialogBox.TypeDialog($"But it cannot learn more than {PokemonBase.MaxNumMoves} moves.");
+                        yield return ChooseMoveToForget(playerUnit.Pokemon, newMove.Base);
+                        yield return new WaitUntil(() => state != BattleState.MoveToForget);
+                        yield return new WaitForSeconds(2f);
                     }
                 }
 
