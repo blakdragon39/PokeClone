@@ -3,6 +3,8 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "Pokemon", menuName = "Pokemon/Create new pokemon")]
 public class PokemonBase : ScriptableObject {
+
+    public static int MaxNumMoves { get; set; } = 4;
     
     [SerializeField] private string name;
 
