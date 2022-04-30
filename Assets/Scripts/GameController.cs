@@ -21,9 +21,7 @@ public class GameController : MonoBehaviour {
     }
     
     private void Start() {
-        playerController.OnEncountered += StartBattle;
         battleSystem.OnBattleOver += EndBattle;
-        playerController.OnEnterTrainersView += TriggerTrainerBattle;
         
         DialogManager.Instance.OnShowDialog += () => state = GameState.Dialog;
         DialogManager.Instance.OnCloseDialog += () => {
@@ -46,7 +44,7 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void StartBattle() {
+    public void StartBattle() {
         state = GameState.Battle;
         battleSystem.gameObject.SetActive(true);
         worldCamera.gameObject.SetActive(false);
@@ -70,6 +68,11 @@ public class GameController : MonoBehaviour {
         battleSystem.StartTrainerBattle(playerParty, trainerParty);
     }
 
+    public void OnEnterTrainersView(TrainerController trainer) {
+        state = GameState.Cutscene;
+        StartCoroutine(trainer.TriggerTrainerBattle(playerController));
+    }
+
     private void EndBattle(bool won) {
         if (won && trainer != null) {
             trainer.BattleLost();
@@ -79,13 +82,5 @@ public class GameController : MonoBehaviour {
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
-    }
-
-    private void TriggerTrainerBattle(Collider2D trainerCollider) {
-        var trainer = trainerCollider.GetComponentInParent<TrainerController>();
-        if (trainer != null) {
-            state = GameState.Cutscene;
-            StartCoroutine(trainer.TriggerTrainerBattle(playerController));
-        }
     }
 }
