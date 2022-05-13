@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public enum GameState {
-    FreeRoam, Battle, Dialog, Cutscene
+    FreeRoam, Battle, Dialog, Cutscene, Paused
 }
 
 public class GameController : MonoBehaviour {
@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour {
     [SerializeField] private Camera worldCamera;
 
     private GameState state;
+    private GameState stateBeforePause;
     private TrainerController trainer;
 
     private void Awake() {
@@ -41,6 +42,15 @@ public class GameController : MonoBehaviour {
             case GameState.Dialog:
                 DialogManager.Instance.HandleUpdate();
                 break;
+        }
+    }
+
+    public void PauseGame(bool pause) {
+        if (pause) {
+            stateBeforePause = state;
+            state = GameState.Paused;
+        } else {
+            state = stateBeforePause;
         }
     }
 
