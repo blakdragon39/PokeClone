@@ -7,6 +7,9 @@ public enum GameState {
 public class GameController : MonoBehaviour {
 
     public static GameController Instance { get; private set; }
+
+    public SceneDetails CurrentScene { get; private set; }
+    public SceneDetails PrevScene { get; private set; }
     
     [SerializeField] private PlayerController playerController;
     [SerializeField] private BattleSystem battleSystem;
@@ -81,6 +84,11 @@ public class GameController : MonoBehaviour {
     public void OnEnterTrainersView(TrainerController trainer) {
         state = GameState.Cutscene;
         StartCoroutine(trainer.TriggerTrainerBattle(playerController));
+    }
+
+    public void SetCurrentScene(SceneDetails currScene) {
+        PrevScene = CurrentScene;
+        CurrentScene = currScene;
     }
 
     private void EndBattle(bool won) {
