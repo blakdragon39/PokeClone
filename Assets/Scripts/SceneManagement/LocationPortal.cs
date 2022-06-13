@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class Portal : MonoBehaviour, IPlayerTriggerable {
-
-    [SerializeField] private int sceneToLoad = -1;
+// Teleports the player to a different position without switching scenes
+public class LocationPortal : MonoBehaviour, IPlayerTriggerable {
+    
     [SerializeField] private DestinationId destinationPortal;
     [SerializeField] private Transform spawnPoint;
 
@@ -19,28 +18,21 @@ public class Portal : MonoBehaviour, IPlayerTriggerable {
     
     public void OnPlayerTriggered(PlayerController player) {
         player.Character.Animator.IsMoving = false;
-        StartCoroutine(SwitchScene(player));
+        StartCoroutine(Teleport(player));
     }
 
-    private IEnumerator SwitchScene(PlayerController player) {
-        DontDestroyOnLoad(gameObject);
+    private IEnumerator Teleport(PlayerController player) {
         GameController.Instance.PauseGame(true);
         
         yield return fader.FadeIn(0.5f);
-        yield return SceneManager.LoadSceneAsync(sceneToLoad);
         
         // find first portal in next scene with the same destination ID
-        var destPortal = FindObjectsOfType<Portal>()
+        var destPortal = FindObjectsOfType<LocationPortal>()
             .First(portal => portal != this && portal.destinationPortal == destinationPortal);
         player.Character.SetPositionAndSnapToTile(destPortal.SpawnPoint.position);
 
         yield return fader.FadeOut(0.5f);
         
         GameController.Instance.PauseGame(false);
-        Destroy(gameObject);
     }
-}
-
-public enum DestinationId {
-    A, B, C, D
 }
