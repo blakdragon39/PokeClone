@@ -38,6 +38,15 @@ public class GameController : MonoBehaviour {
         switch (state) {
             case GameState.FreeRoam:
                 playerController.HandleUpdate();
+                
+                if (Input.GetKeyDown(KeyCode.S)) {
+                    SavingSystem.i.Save("saveSlot1");
+                }
+
+                if (Input.GetKeyDown(KeyCode.L)) {
+                    SavingSystem.i.Load("saveSlot1");
+                }
+                
                 break;
             case GameState.Battle:
                 battleSystem.HandleUpdate();
